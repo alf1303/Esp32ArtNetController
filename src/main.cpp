@@ -2,7 +2,7 @@
 #include <FastLED.h>
 #include <UIPEthernet.h>
 
-#define NUM_LEDS 720
+#define NUM_LEDS 120
 #define UNIVERSE_SIZE 120
 #define START_UNIVERSE 0
 #define ARTNET_PORT 6454
@@ -22,14 +22,15 @@ void setup() {
   Serial.begin(115200);
   delay(10);
   FastLED.addLeds<NEOPIXEL, 15>(leds, 0, UNIVERSE_SIZE);
-  FastLED.addLeds<NEOPIXEL, 27>(leds, UNIVERSE_SIZE, UNIVERSE_SIZE);
-  FastLED.addLeds<NEOPIXEL, 26>(leds, 2*UNIVERSE_SIZE, UNIVERSE_SIZE);
-  FastLED.addLeds<NEOPIXEL, 25>(leds, 3*UNIVERSE_SIZE, UNIVERSE_SIZE);
-  FastLED.addLeds<NEOPIXEL, 33>(leds, 4*UNIVERSE_SIZE, UNIVERSE_SIZE);
-  FastLED.addLeds<NEOPIXEL, 21>(leds, 5*UNIVERSE_SIZE, UNIVERSE_SIZE);
+  // FastLED.addLeds<NEOPIXEL, 27>(leds, UNIVERSE_SIZE, UNIVERSE_SIZE);
+  // FastLED.addLeds<NEOPIXEL, 26>(leds, 2*UNIVERSE_SIZE, UNIVERSE_SIZE);
+  // FastLED.addLeds<NEOPIXEL, 25>(leds, 3*UNIVERSE_SIZE, UNIVERSE_SIZE);
+  // FastLED.addLeds<NEOPIXEL, 33>(leds, 4*UNIVERSE_SIZE, UNIVERSE_SIZE);
+  // FastLED.addLeds<NEOPIXEL, 21>(leds, 5*UNIVERSE_SIZE, UNIVERSE_SIZE);
   Ethernet.begin(mymac, IPAddress(192,168,11,6));
   udp.begin(ARTNET_PORT);
   syncmax=(1<<universesCount)-1;
+printf("syncmax: %d\n", syncmax);
   sync=0;
 }
 
@@ -64,12 +65,12 @@ void readUDP() {
        
          
          sync=sync | (1<<(universe - START_UNIVERSE));
-        /* the code below is to avoid frame mix */
+printf("sync: %d\n", sync);        /* the code below is to avoid frame mix */
         /* comment the code below if it's not too important for you*/
-         if(universe==START_UNIVERSE)
-         {
-          sync=1;
-         }
+        //  if(universe==START_UNIVERSE)
+        //  {
+        //   sync=1;
+        //  }
           /* end of code **/
          if(sync==syncmax) {
            FastLED.show();
