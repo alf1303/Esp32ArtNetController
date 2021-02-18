@@ -2,6 +2,7 @@
 #include <FastLED.h>
 #include <UIPEthernet.h>
 
+//#define NUM_LEDS 720
 #define NUM_LEDS 120
 #define UNIVERSE_SIZE 120
 #define START_UNIVERSE 0
