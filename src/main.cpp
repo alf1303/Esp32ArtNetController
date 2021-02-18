@@ -2,7 +2,7 @@
 #include <FastLED.h>
 #include <UIPEthernet.h>
 
-#define NUM_LEDS 240
+#define NUM_LEDS 360
 #define UNIVERSE_SIZE 120
 #define START_UNIVERSE 0
 #define ARTNET_PORT 6454
@@ -23,7 +23,7 @@ void setup() {
   delay(10);
   FastLED.addLeds<NEOPIXEL, 21>(leds, 0, UNIVERSE_SIZE);
   FastLED.addLeds<NEOPIXEL, 15>(leds, UNIVERSE_SIZE, UNIVERSE_SIZE);
-  // FastLED.addLeds<NEOPIXEL, 25>(leds, 2*UNIVERSE_SIZE, UNIVERSE_SIZE);
+  FastLED.addLeds<NEOPIXEL, 25>(leds, 2*UNIVERSE_SIZE, UNIVERSE_SIZE);
   // FastLED.addLeds<NEOPIXEL, 25>(leds, 3*UNIVERSE_SIZE, UNIVERSE_SIZE);
   // FastLED.addLeds<NEOPIXEL, 33>(leds, 4*UNIVERSE_SIZE, UNIVERSE_SIZE);
   // FastLED.addLeds<NEOPIXEL, 21>(leds, 5*UNIVERSE_SIZE, UNIVERSE_SIZE);
