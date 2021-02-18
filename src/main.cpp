@@ -11,9 +11,9 @@ const uint8_t universesCount = NUM_LEDS/UNIVERSE_SIZE;
 EthernetUDP udp;
 uint8_t mymac[] = { 0x74, 0x69, 0x69, 0x2D, 0x30, 0x31 };
 uint8_t uniData[512];
-uint8_t headerData[18];
-bool universesReceived[universesCount];
-bool send;
+uint8_t headerData[18]; //artnetHeader
+bool universesReceived[universesCount]; //mark received universe
+bool send; //flag, allowing to show when all universes received
 
 CRGB leds[NUM_LEDS];
 
@@ -38,7 +38,7 @@ void readUDP() {
          int uniSize = (headerData[16] << 8) + (headerData[17]);
          udp.read(uniData, uniSize);
          uint8_t universe = headerData[14];
-         printf("uni: %d\n", universe);
+        //  printf("uni: %d\n", universe);
          int offset = (universe - START_UNIVERSE)*UNIVERSE_SIZE;
            for(int i = 0; i < UNIVERSE_SIZE; i++) {
              leds[offset + i].red = uniData[i*3];
