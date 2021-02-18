@@ -1,64 +1,70 @@
 #include <Arduino.h>
 #include <FastLED.h>
 #include <UIPEthernet.h>
-
+#include <artnetESP32/ArtnetESP32.h>
 //#define NUM_LEDS 720
-#define NUM_LEDS 120
+#define NUM_LEDS 720
 #define UNIVERSE_SIZE 120
 #define START_UNIVERSE 0
 #define ARTNET_PORT 6454
 const uint8_t universesCount = NUM_LEDS/UNIVERSE_SIZE;
+ArtnetESP32 artnet;
 
 EthernetUDP udp;
 uint8_t mymac[] = { 0x74, 0x69, 0x69, 0x2D, 0x30, 0x31 };
 uint8_t uniData[512];
 uint8_t headerData[18]; //artnetHeader
-bool universesReceived[universesCount]; //mark received universe
-bool send; //flag, allowing to show when all universes received
 
 CRGB leds[NUM_LEDS];
 
+void displayfunction()
+{
+  if (artnet.frameslues%100==0)
+   Serial.printf("nb frames read: %d  nb of incomplete frames:%d lost:%.2f %%\n",artnet.frameslues,artnet.lostframes,(float)(artnet.lostframes*100)/artnet.frameslues);
+   //here the buffer is the led array hence a simple FastLED.show() is enough to display the array
+   FastLED.show();
+}
+
+void connectWifi() {
+    WiFi.mode(WIFI_STA);
+    Serial.printf("Connecting ");
+    WiFi.begin("udp", "esp18650");
+    while (WiFi.status() != WL_CONNECTED) {
+      Serial.println(WiFi.status());
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.println("");
+    Serial.println("WiFi connected.");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+}
+
+void connectEthernet() {
+  Ethernet.begin(mymac, IPAddress(192,168,11,6));
+  // udp.begin(ARTNET_PORT);
+}
+
 void setup() {
   Serial.begin(115200);
-  delay(10);
+  delay(10);   
+  
+  connectWifi();
+  // connectEthernet();
+
   FastLED.addLeds<NEOPIXEL, 15>(leds, 0, UNIVERSE_SIZE);
-  // FastLED.addLeds<NEOPIXEL, 21>(leds, UNIVERSE_SIZE, UNIVERSE_SIZE);
-  // FastLED.addLeds<NEOPIXEL, 26>(leds, 2*UNIVERSE_SIZE, UNIVERSE_SIZE);
-  // FastLED.addLeds<NEOPIXEL, 25>(leds, 3*UNIVERSE_SIZE, UNIVERSE_SIZE);
-  // FastLED.addLeds<NEOPIXEL, 33>(leds, 4*UNIVERSE_SIZE, UNIVERSE_SIZE);
-  // FastLED.addLeds<NEOPIXEL, 21>(leds, 5*UNIVERSE_SIZE, UNIVERSE_SIZE);
-  Ethernet.begin(mymac, IPAddress(192,168,11,6));
-  udp.begin(ARTNET_PORT);
+  FastLED.addLeds<NEOPIXEL, 27>(leds, UNIVERSE_SIZE, UNIVERSE_SIZE);
+  FastLED.addLeds<NEOPIXEL, 26>(leds, 2*UNIVERSE_SIZE, UNIVERSE_SIZE);
+  FastLED.addLeds<NEOPIXEL, 25>(leds, 3*UNIVERSE_SIZE, UNIVERSE_SIZE);
+  FastLED.addLeds<NEOPIXEL, 33>(leds, 4*UNIVERSE_SIZE, UNIVERSE_SIZE);
+  FastLED.addLeds<NEOPIXEL, 21>(leds, 5*UNIVERSE_SIZE, UNIVERSE_SIZE);
+   artnet.setFrameCallback(&displayfunction); //set the function that will be called back a frame has been received
+   artnet.setLedsBuffer((uint8_t*)leds); //set the buffer to put the frame once a frame has been received
+   artnet.begin(NUM_LEDS,UNIVERSE_SIZE); //configure artnet
 }
 
 void readUDP() {
-  bool send = 1;
-  if(udp.parsePacket()) {
-    udp.read(headerData, 18);
-         if ( headerData[0] == 'A' && headerData[4] == 'N') {
-         int uniSize = (headerData[16] << 8) + (headerData[17]);
-         udp.read(uniData, uniSize);
-         uint8_t universe = headerData[14];
-        //  printf("uni: %d\n", universe);
-         int offset = (universe - START_UNIVERSE)*UNIVERSE_SIZE;
-           for(int i = 0; i < UNIVERSE_SIZE; i++) {
-             leds[offset + i].red = uniData[i*3];
-             leds[offset + i].green = uniData[i*3 + 1];
-             leds[offset + i].blue = uniData[i*3 + 2];
-           }
-           universesReceived[universe-START_UNIVERSE] = 1;
-         for(int j = 0; j < universesCount; j++) {
-           if(universesReceived[j] == 0) {
-             send = 0;
-             break;
-           }
-         }
-         if(send) {
-           FastLED.show();
-           memset(universesReceived, 0, universesCount);
-         }
-        }    
-  }
+  artnet.readFrame();
 }
 
 void loop() {
