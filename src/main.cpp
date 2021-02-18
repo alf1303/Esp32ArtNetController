@@ -48,23 +48,10 @@ void readUDP() {
                                                                     //serial output with 3 universes:
                                                                   // uni: 0, size: 512, sync: 1, syncMax: 7
                                                                   // uni: 1, size: 512, sync: 2, syncMax: 0
-         printf("uni: %d, size: %d", universe, uniSize);
-         /*
-           for(int i = 0; i < UNIVERSE_SIZE; i++) {
-             leds[offset + i].red = uniData[i*3];
-             leds[offset + i].green = uniData[i*3 + 1];
-             leds[offset + i].blue = uniData[i*3 + 2];
-           }*/
-         /*  universesReceived[universe-START_UNIVERSE] = 1;
-         for(int j = 0; j < universesCount; j++) {
-           if(universesReceived[j] == 0) {
-             send = 0;
-             break;
-           }
-         }*/
+        //  printf("uni: %d, size: %d", universe, uniSize);
          
          sync=sync | (1<<(universe - START_UNIVERSE));
-         printf(", sync: %d, syncMax: %d\n", sync, syncmax);
+        //  printf(", sync: %d, syncMax: %d\n", sync, syncmax);
         /* the code below is to avoid frame mix */
         /* comment the code below if it's not too important for you*/
          if(universe==START_UNIVERSE)
