@@ -45,6 +45,9 @@ void readUDP() {
           //if the colors are not correct change I can make a quick change
          udp.read((uint8_t *)(leds+offset), UNIVERSE_SIZE*3);
         
+                                                                    //serial output with 3 universes:
+                                                                  // uni: 0, size: 512, sync: 1, syncMax: 7
+                                                                  // uni: 1, size: 512, sync: 2, syncMax: 0
          printf("uni: %d, size: %d", universe, uniSize);
          /*
            for(int i = 0; i < UNIVERSE_SIZE; i++) {
