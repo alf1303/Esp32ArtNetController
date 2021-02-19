@@ -1,3 +1,34 @@
+//show == FastLED.show()
+//ONE UNIVERSE LOG
+uni: 0, size: 512
+show
+uni: 0, size: 512
+show
+uni: 0, size: 512
+show
+uni: 0, size: 512
+show
+uni: 0, size: 512
+show
+uni: 0, size: 512
+show
+uni: 0, size: 512
+show
+uni: 0, size: 512
+show
+uni: 0, size: 512
+show
+uni: 0, size: 512
+show
+uni: 0, size: 512
+show
+uni: 0, size: 512
+show
+uni: 0, size: 512
+show
+uni: 0, size: 512
+show
+
 
 //TWO UNIVERSES(0, 1) LOG
 uni: 0, size: 512
